@@ -1,0 +1,1 @@
+select * into contribuyentes_autorizados from contribuyentes_autorizados_1

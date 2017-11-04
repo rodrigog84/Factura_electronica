@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteCond $1 !^(index\.php|images|captcha|js|css|img|documentos|correo|xml|robot\.txt)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /Factura_electronica/index.php/$1 [L]
+Options -Indexes
