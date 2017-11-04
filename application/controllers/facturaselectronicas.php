@@ -152,13 +152,20 @@ class Facturaselectronicas extends CI_Controller {
             //redirect('accounts/add_cuenta/2');
             //return;
         }else{
-			$this->db->where('nombre', 'cert_password');
+			/*$this->db->where('nombre', 'cert_password');
 			$this->db->update('param_fe',array('valor' => $password)); 
 
 			$this->db->where('nombre', 'cert_password_encrypt'); //veremos si se puede usar la password encriptada
 			$this->db->update('param_fe',array('valor' => $password_encrypt)); 
+            echo $this->db->last_query(); exit;*/
 
         }
+
+        $this->db->where('nombre', 'cert_password');
+        $this->db->update('param_fe',array('valor' => $password)); 
+
+        $this->db->where('nombre', 'cert_password_encrypt'); //veremos si se puede usar la password encriptada
+        $this->db->update('param_fe',array('valor' => $password_encrypt));         
    		$dataupload = $this->upload->data();
 
 
