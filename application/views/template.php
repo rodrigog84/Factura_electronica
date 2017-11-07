@@ -197,10 +197,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 											 <ul id="menu-academico-sub" >
 												<li id="menu-academico-avaliacoes" ><a href="<?php echo base_url();?>facturaselectronicas/empresas">Registro Empresa</a></li>
 												<li id="menu-academico-boletim" ><a href="#"  data-toggle="modal" data-target="#myModal2">Certificado Digital</a></li>
-												<li id="menu-academico-boletim" ><a href="<?php echo base_url();?>facturaselectronicas/cargar_folio">Carga de CAF</a></li>
-												<li id="menu-academico-boletim" ><a href="factura_proveedor.html">Carga DTE Compras</a></li>
-												<li id="menu-academico-boletim" ><a href="cargar_constribuyente.html">Carga Constribuyentes</a></li>
-												<li id="menu-academico-boletim" ><a href="confi_email.html">Configuración de Email</a></li>
+												<li id="menu-academico-boletim" ><a href="<?php echo base_url();?>	facturaselectronicas/cargar_folio">Carga de CAF</a></li>
+												<li id="menu-academico-boletim" ><a href="<?php echo base_url();?>	facturaselectronicas/factura_proveedor">Carga DTE Compras</a></li>
+												<li id="menu-academico-boletim" ><a href="<?php echo base_url();?>	facturaselectronicas/cargar_contribuyente">Carga Contribuyentes</a></li>
+												<li id="menu-academico-boletim" ><a href="<?php echo base_url();?>	facturaselectronicas/confi_email">Configuración de Email</a></li>
 											  </ul>
 										 </li>
 

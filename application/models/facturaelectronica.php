@@ -712,6 +712,21 @@ class Facturaelectronica extends CI_Model
 
 
 
+	public function estado_tipo_documento($tipo_documento){
+		$this->db->select('f.id ')
+						  ->from('folios_caf f')
+						  ->join('caf c','f.idcaf = c.id')
+						  ->where('c.tipo_caf',$tipo_documento)
+						  ->where("f.estado = 'P'");
+		$query = $this->db->get();
+		$folios_existentes = $query->result();				
+
+       	return count($folios_existentes);
+	 }
+
+
+
+
 	public function crea_dte_csv($codproceso){
 
 		$this->db->select('tipocaf, folio ')
