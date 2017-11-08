@@ -47,3 +47,27 @@
 												
 													</div>
 										</div>
+<!-- //Modal constribuyente -->
+<div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" id="myModal4">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="exampleModalLabel">Carga Constribuyente</h4>
+      </div>
+
+      <div class="modal-body">
+      	<h4 class="modal-body">Subir Archivo</h4>
+      	<div id="seleccion">
+      		<p class="seleccion">Subir Archivo <i class="fa fa-upload" aria-hidden="true"></i></p>
+			<input type="file" name="file" id="file">
+
+		</div>
+		
+		<br>
+		<button type = "button" class = "btn btn-info" id="comando">Subir</button>
+		<button type = "button" class = "btn btn-danger" data-dismiss="modal"  id="comando">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

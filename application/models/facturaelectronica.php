@@ -426,6 +426,69 @@ class Facturaelectronica extends CI_Model
 
 
 
+	public function get_contribuyentes(){
+
+		
+		//$this->db->trans_start();
+		header('Content-type: text/plain; charset=ISO-8859-1');
+
+		$config = $this->genera_config();
+		include $this->ruta_libredte();
+		// solicitar datos
+		$datos = \sasco\LibreDTE\Sii::getContribuyentes(
+		    new \sasco\LibreDTE\FirmaElectronica($config['firma']),
+		    \sasco\LibreDTE\Sii::PRODUCCION
+		);
+
+		var_dump($datos); exit;
+		$tabla_contribuyentes = $this->busca_parametro_fe('tabla_contribuyentes');
+		$tabla_inserta = $tabla_contribuyentes == 'contribuyentes_autorizados_1' ? 'contribuyentes_autorizados_2' : 'contribuyentes_autorizados_1';
+
+		
+		foreach ($datos as $dato) {
+
+			$array_rut = explode("-",$dato[0]);
+			$array_insert = array(
+								'rut' => $array_rut[0],
+								'dv' => $array_rut[1],
+								'razon_social' => $dato[1],
+								'nro_resolucion' => $dato[2],
+								'fec_resolucion' => formato_fecha($dato[3],'d-m-Y','Y-m-d'),
+								'mail' => $dato[4],
+								'url' => $dato[5]
+							);
+
+			$this->db->insert($tabla_inserta,$array_insert); 
+
+
+		}
+
+
+		$array_insert = array(
+						'nombre_archivo' => null,
+						'ruta' => null,
+						);
+
+		$this->db->insert('log_cargas_bases_contribuyentes',$array_insert); 
+
+
+		$this->db->select('count(*) as cantidad')
+			  ->from($tabla_inserta);
+		$query = $this->db->get();
+		if(isset($query->row()->cantidad)){
+			if($query->row()->cantidad > 0){
+				$this->set_parametro_fe('tabla_contribuyentes',$tabla_inserta);
+				$this->db->query('truncate '. $tabla_contribuyentes);				
+			}
+
+		}
+
+
+		//$this->db->trans_complete(); 		
+
+	}	
+
+
 
 
 	public function carga_contribuyentes($path_base,$archivo){

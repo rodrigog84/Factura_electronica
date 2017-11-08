@@ -184,10 +184,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 										 <li id="menu-academico" ><a href="#"><i class="fa fa-table"></i> <span>General</span> <span class="fa fa-angle-right" style="float: right"></span></a>
 										   <ul id="menu-academico-sub" >
-											<li id="menu-academico-avaliacoes" ><a href="clientes.html"> Clientes</a></li>
-											<li id="menu-academico-boletim" ><a href="vendedores.html">Vendedores</a></li>
-											<li id="menu-academico-avaliacoes" ><a href="condicion_pago.html">Condición de Pago</a></li>
-											<li id="menu-academico-avaliacoes" ><a href="sucursales.html">Sucursales</a></li>
+											<li id="menu-academico-avaliacoes" ><a href="<?php echo base_url();?>general/clientes"> Clientes</a></li>
+											<li id="menu-academico-boletim" ><a href="<?php echo base_url();?>general/vendedores">Vendedores</a></li>
+											<li id="menu-academico-avaliacoes" ><a href="<?php echo base_url();?>general/condicion_pago">Condición de Pago</a></li>
+											<li id="menu-academico-avaliacoes" ><a href="<?php echo base_url();?>general/sucursales">Sucursales</a></li>
 											
 										  </ul>
 										</li>

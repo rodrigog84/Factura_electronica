@@ -26,7 +26,7 @@ namespace sasco\LibreDTE;
 /**
  * Clase para acciones genéricas asociadas al SII de Chile
  * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
- * @version 2016-07-25
+ * @version 2017-09-11
  */
 class Sii
 {
@@ -47,7 +47,7 @@ class Sii
     const IVA = 19; ///< Tasa de IVA
 
     private static $retry = 10; ///< Veces que se reintentará conectar a SII al usar el servicio web
-    private static $verificar_ssl = false; ///< Indica si se deberá verificar o no el certificado SSL del SII
+    private static $verificar_ssl = true; ///< Indica si se deberá verificar o no el certificado SSL del SII
     private static $ambiente = self::PRODUCCION; ///< Ambiente que se utilizará
 
     private static $direcciones_regionales = [
@@ -64,6 +64,7 @@ class Sii
         'SAN VICENTE' => 'SAN VICENTE TAGUA TAGUA',
         'TALTAL' => 'ANTOFAGASTA',
         'VITACURA' => 'SANTIAGO ORIENTE',
+        'VICHUQUÉN' => 'CURICÓ',
     ]; /// Direcciones regionales del SII según la comuna
 
     /**
@@ -88,6 +89,18 @@ class Sii
     public static function getServidor($ambiente = null)
     {
         return self::$config['servidor'][self::getAmbiente($ambiente)];
+    }
+
+    /**
+     * Método que entrega la URL de un recurso en el SII según el ambiente que se esté usando
+     * @param recurso Recurso del sitio del SII que se desea obtener la URL
+     * @param ambiente Ambiente que se desea obtener el servidor, si es null se autodetectará
+     * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
+     * @version 2017-09-11
+     */
+    public static function getURL($recurso, $ambiente = null)
+    {
+        return 'https://'.self::getServidor($ambiente).'.sii.cl'.$recurso;
     }
 
     /**
@@ -161,7 +174,6 @@ class Sii
         if (!self::$verificar_ssl) {
             if (self::getAmbiente()==self::PRODUCCION) {
                 $msg = Estado::get(Estado::ENVIO_SSL_SIN_VERIFICAR);
-                //trigger_error($msg, E_USER_NOTICE);
                 \sasco\LibreDTE\Log::write(Estado::ENVIO_SSL_SIN_VERIFICAR, $msg, LOG_WARNING);
             }
             $options = ['stream_context' => stream_context_create([
@@ -221,6 +233,16 @@ class Sii
     }
 
     /**
+     * Método que indica si se está o no verificando el SSL en las conexiones al SII
+     * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
+     * @version 2017-05-11
+     */
+    public static function getVerificarSSL()
+    {
+        return self::$verificar_ssl;
+    }
+
+    /**
      * Método que realiza el envío de un DTE al SII
      * Referencia: http://www.sii.cl/factura_electronica/factura_mercado/envio.pdf
      * @param usuario RUN del usuario que envía el DTE
@@ -273,11 +295,10 @@ class Sii
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         // si no se debe verificar el SSL se asigna opción a curl, además si
         // se está en el ambiente de producción y no se verifica SSL se
-        // generará un error de nivel E_USER_NOTICE
+        // generará una entrada en el log
         if (!self::$verificar_ssl) {
             if (self::getAmbiente()==self::PRODUCCION) {
                 $msg = Estado::get(Estado::ENVIO_SSL_SIN_VERIFICAR);
-                //trigger_error($msg, E_USER_NOTICE);
                 \sasco\LibreDTE\Log::write(Estado::ENVIO_SSL_SIN_VERIFICAR, $msg, LOG_WARNING);
             }
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -396,12 +417,13 @@ class Sii
      * Método que entrega un arreglo con todos los datos de los contribuyentes
      * que operan con factura electrónica descargados desde el SII
      * @author Esteban De La Fuente Rubio, DeLaF (esteban[at]sasco.cl)
-     * @version 2016-08-06
+     * @version 2017-07-07
      */
-    public static function getContribuyentes(\sasco\LibreDTE\FirmaElectronica $Firma, $ambiente = null)
+    public static function getContribuyentes(\sasco\LibreDTE\FirmaElectronica $Firma, $ambiente = null, $dia = null)
     {
         // solicitar token
         $token = \sasco\LibreDTE\Sii\Autenticacion::getToken($Firma);
+
         if (!$token)
             return false;
         // definir ambiente y servidor
@@ -415,7 +437,10 @@ class Sii
             'Cookie: TOKEN='.$token,
             'Accept-Encoding' => 'gzip, deflate, sdch',
         ];
-        $url = 'https://'.$servidor.'.sii.cl/cvc_cgi/dte/ee_consulta_empresas_dwnld?NOMBRE_ARCHIVO=ce_empresas_dwnld_'.date('Ymd').'.csv';
+        $dia = $dia===null ? date('Ymd') : str_replace('-', '', $dia);
+        $url = 'https://'.$servidor.'.sii.cl/cvc_cgi/dte/ce_empresas_dwnld?NOMBRE_ARCHIVO=ce_empresas_dwnld_'.$dia.'.csv';
+        //$url = 'https://palena.sii.cl/cvc_cgi/dte/ce_empresas_dwnld?NOMBRE_ARCHIVO=ce_empresas_dwnld_'.$dia.'.csv';
+        //https://palena.sii.cl/cvc_cgi/dte/ee_consulta_empresas_dwnld?NOMBRE_ARCHIVO=ee_empresas_mipyme.csv
         curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -425,7 +450,6 @@ class Sii
         if (!self::$verificar_ssl) {
             if ($ambiente==self::PRODUCCION) {
                 $msg = Estado::get(Estado::ENVIO_SSL_SIN_VERIFICAR);
-                //trigger_error($msg, E_USER_NOTICE);
                 \sasco\LibreDTE\Log::write(Estado::ENVIO_SSL_SIN_VERIFICAR, $msg, LOG_WARNING);
             }
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
@@ -438,6 +462,7 @@ class Sii
         curl_close($curl);
         // entregar datos del archivo CSV
         ini_set('memory_limit', -1);
+        var_dump($response);
         $lines = explode("\n", $response);
         $n_lines = count($lines);
         $data = [];
