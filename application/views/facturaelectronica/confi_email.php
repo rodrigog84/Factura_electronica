@@ -8,7 +8,7 @@
 								  <!--//sub-heard-part-->
 								 
 									<div class="graph-visual tables-main">
-										<form action="<?php echo base_url();?>facturaselectronicas/registro_email" method="POST">	
+										<form action="<?php echo base_url();?>facturaselectronicas/registro_email" method="POST" class="form-horizontal">	
 										<div class="graph">
 											<h3 class="inner-tittle two">Contacto SII</h3>
 											<form class="form-horizontal">
